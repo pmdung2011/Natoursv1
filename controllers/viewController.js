@@ -9,7 +9,7 @@ exports.alerts = (req, res, next) => {
   const { alert } = req.query;
   if (alert === 'booking')
     res.locals.alert =
-      "Your Booking was successful! Please check your email for confirmation. If your booking doesn't show up here immediatly, please come back later.";
+      "Your Booking was successful! Please check your email for confirmation. If your booking doesn't show up here immediately, please come back later.";
   if (alert === 'notLoggedin')
     res.locals.alert = "You're not loggedin. Please login to get access!";
   next();
@@ -22,6 +22,7 @@ exports.getOverview = catchAsync(async (req, res, next) => {
     tours
   });
 });
+
 exports.getTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findOne({ slug: req.params.slug }).populate({
     path: 'reviews',
@@ -60,6 +61,8 @@ exports.getLoginForm = (req, res) => {
     title: 'Log into your account'
   });
 };
+
+
 exports.getSignupForm = (req, res) => {
   if (res.locals.user) {
     return res.redirect('/');

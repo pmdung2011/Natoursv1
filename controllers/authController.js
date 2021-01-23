@@ -58,6 +58,8 @@ exports.signup = catchAsync(async (req, res, next) => {
     verifyEmailTokenExpires
   });
 
+  console.log(newUser);
+
   const url = `${req.protocol}://${req.get(
     'host'
   )}/api/v1/users/verifyEmail/${token}`;

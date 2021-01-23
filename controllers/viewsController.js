@@ -1,14 +1,13 @@
 const Tour = require('../models/tourModel');
 const User = require('../models/userModel');
+const Reviews = require('../models/reviewModel');
 const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
 exports.alerts = (req, res, next) => {
   const { alert } = req.query;
-  if (alert === 'booking')
-    res.locals.alert =
-      "Your booking was successful! Please check your email for a confirmation. If your booking doesn't show up here immediatly, please come back later.";
+  if (alert === 'booking') res.locals.alert = 'Your booking was successful!';
   next();
 };
 
@@ -28,8 +27,28 @@ exports.getTour = catchAsync(async (req, res, next) => {
   // 1) Get the data, for the requested tour (including reviews and guides)
   const tour = await Tour.findOne({ slug: req.params.slug }).populate({
     path: 'reviews',
-    fields: 'review rating user'
+    fields: 'review rating user',
+    populate: {
+      path: 'user'
+    }
   });
+
+  let reviewByUser = false;
+  if (req.user) {
+    tour.reviews.forEach(review => {
+      if (review.user.id === req.user.id) {
+        reviewByUser = review;
+      }
+    });
+  }
+  // load latest revies first
+  const reviewsClone = tour.reviews.reverse();
+  if (reviewByUser) {
+    const i = reviewsClone.indexOf(reviewByUser);
+    reviewsClone.splice(i, 1);
+    reviewsClone.unshift(reviewByUser);
+  }
+  // now we build the template - in pug
 
   if (!tour) {
     return next(new AppError('There is no tour with that name.', 404));
@@ -39,13 +58,21 @@ exports.getTour = catchAsync(async (req, res, next) => {
   // 3) Render template using data from 1)
   res.status(200).render('tour', {
     title: `${tour.name} Tour`,
-    tour
+    tour,
+    reviews: reviewsClone,
+    reviewByUser
   });
 });
 
 exports.getLoginForm = (req, res) => {
   res.status(200).render('login', {
     title: 'Log into your account'
+  });
+};
+
+exports.getSignupForm = (req, res) => {
+  res.status(200).render('signup', {
+    title: 'Create your account'
   });
 };
 
@@ -69,6 +96,18 @@ exports.getMyTours = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getMyReviews = catchAsync(async (req, res, next) => {
+  const reviews = await Reviews.find({ user: req.user.id }).populate(
+    'tour',
+    'name imageCover slug'
+  );
+
+  res.status(200).render('reviews', {
+    title: 'My reviews',
+    reviews
+  });
+});
+
 exports.updateUserData = catchAsync(async (req, res, next) => {
   const updatedUser = await User.findByIdAndUpdate(
     req.user.id,
@@ -87,3 +126,15 @@ exports.updateUserData = catchAsync(async (req, res, next) => {
     user: updatedUser
   });
 });
+
+exports.getForgotPasswordForm = (req, res) => {
+  res.render('forgotPassword', {
+    title: 'Forgot your password?'
+  });
+};
+
+exports.getResetPasswordForm = (req, res) => {
+  res.render('resetPassword', {
+    title: 'Reset your password'
+  });
+};

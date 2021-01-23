@@ -19,7 +19,7 @@ block content
                                 -const selected = false
                                 select#rating(name="rating" disabled)
                                     each value in [1,2,3,4,5]
-                                        if review.rating == value
+                                        if review.rating === value
                                             option(value=`${value}` selected)= value
                                         else    
                                             option(value=`${value}`)= value

@@ -12,7 +12,7 @@ export const login = async (email, password) => {
         password
       }
     });
-
+    console.log(res.data.status);
     if (res.data.status === 'success') {
       showAlert('success', 'Logged in successfully');
 
@@ -24,6 +24,14 @@ export const login = async (email, password) => {
     showAlert('error', err.response.data.message);
   }
 };
+
+//Move to index.js
+// document.querySelector('.form').addEventListener('submit', e => {
+//   e.preventDefault();
+//   const email = document.getElementById('email').value;
+//   const password = document.getElementById('password').value;
+//   login(email,password);
+// });
 
 export const logout = async () => {
   try {
