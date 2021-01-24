@@ -18,7 +18,7 @@ https://shielded-sands-96619.herokuapp.com/
 
 * Deploying Node.js application to production with Heroku
 
-can use Email address: victor@example.com , Password: test1234 to login
+can use Email address: user@natours.io , Password: test1234 to login
 
 ## :sparkles: Key Features of the Application
 
