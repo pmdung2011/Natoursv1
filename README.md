@@ -1,5 +1,5 @@
 # Natours version 1
-# Natours Application 
+
 https://shielded-sands-96619.herokuapp.com/
 
 ## Built based on MVC (Model-View-Controller) architecture, the system provides a cross-platform for online tourism services.
