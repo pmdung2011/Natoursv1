@@ -47,7 +47,7 @@ const userSchema = new mongoose.Schema({
   //verifyEmailTokenExpires: Date,
   emailVerified: {
     type: Boolean,
-    default: true //***fixing function , default is False
+    default: true // default: False
   },
   active: {
     type: Boolean,

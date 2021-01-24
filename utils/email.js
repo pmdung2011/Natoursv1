@@ -7,15 +7,12 @@ module.exports = class Email {
     this.to = user.email;
     this.firstName = user.name.split(' ')[0];
     this.url = url;
-    this.from = `Natours <${process.env.EMAIL_FROM}>`;
+    this.from = `FuMiYu <${process.env.EMAIL_FROM}>`;
   }
 
   newTransport() {
-    if (
-      process.env.NODE_ENV === 'production ' ||
-      process.env.NODE_ENV === 'production'
-    ) {
-      // sendGrid
+    if (process.env.NODE_ENV === 'production') {
+      // Using sendGrid in production mode
       return nodemailer.createTransport({
         service: 'SendGrid',
         auth: {
@@ -24,7 +21,7 @@ module.exports = class Email {
         }
       });
     }
-
+    //Otherwise using Mailtrap in Dev mode
     return nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: process.env.EMAIL_POST,
@@ -36,12 +33,14 @@ module.exports = class Email {
   }
 
   async send(template, subject) {
+    // 1) Render HTML based on a pug template
     const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
       firstName: this.firstName,
       url: this.url,
       subject
     });
 
+    // 2) Define email options
     const mailOptions = {
       from: this.from,
       to: this.to,
@@ -50,6 +49,7 @@ module.exports = class Email {
       text: htmlToText.fromString(html)
     };
 
+    // 3) Create a transport and send email
     await this.newTransport().sendMail(mailOptions);
   }
 

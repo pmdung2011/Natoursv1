@@ -44,7 +44,6 @@
   "browserslist": [
     "since 2017-06"
   ],
-
   "devDependencies": {
     "eslint": "^7.18.0",
     "eslint-config-airbnb": "^18.2.1",
